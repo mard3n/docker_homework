@@ -9,6 +9,11 @@ services:
       # POSTGRES_USER: django
       # POSTGRES_DB: django
       - "POSTGRES_HOST_AUTH_METHOD=trust"
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER}
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - my_app
 
@@ -19,6 +24,11 @@ services:
       - 8000:8000
     depends_on:
       - database
+    healthcheck:
+      test: curl --fail http://localhost:8000/api/v1/lib/bbk/ || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5      
     networks:
       - my_app
 
@@ -29,6 +39,11 @@ services:
       - 280:80
     depends_on:
       - backend
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries:       
     networks:
       - my_app
 
